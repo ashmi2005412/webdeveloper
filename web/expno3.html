@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Survey Form</title>
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f4f7f6;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        h2 { color: #333; margin-top: 0; }
+        .progress-container { background: #eee; height: 10px; border-radius: 5px; margin: 20px 0; overflow: hidden; }
+        #progress-bar { background: var(--primary); height: 100%; width: 0%; transition: width 0.3s ease; }
+        
+        .question-block { margin-bottom: 25px; padding: 15px; border-left: 4px solid #ddd; transition: 0.3s; }
+        .question-block.valid { border-left-color: var(--success); }
+        .hidden { display: none; }
+        
+        label { display: block; font-weight: 600; margin-bottom: 10px; }
+        input[type="text"], input[type="number"], textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        
+        .error-msg { color: var(--error); font-size: 0.85em; margin-top: 5px; display: none; }
+        .status-bar { font-size: 0.8em; color: #666; text-align: right; margin-top: 10px; }
+        
+        .rating-group { display: flex; gap: 10px; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; }
+        .btn-submit:hover { background: #357abd; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>User Experience Survey Form</h2>
+    
+    <div class="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+    <div id="save-status" class="status-bar">Auto-save: Idle</div>
+
+    <form id="surveyForm">
+        <div class="question-block" data-required="true">
+            <label>1. How did you hear about the designing Application?</label>
+            <select id="source" name="source" onchange="toggleConditional(this.value)">
+                <option value="">Select an option...</option>
+                <option value="social">Social Media</option>
+                <option value="referral">Friend/Referral</option>
+                <option value="other">Other</option>
+            </select>
+            <div class="error-msg">Please select an option.</div>
+        </div>
+
+        <div id="conditional-q" class="question-block hidden" data-required="true">
+            <label>1a. Please specify the "Other" source:</label>
+            <input type="text" id="other_source" name="other_source">
+            <div class="error-msg">This field is required.</div>
+        </div>
+
+        <div class="question-block" data-required="true" data-type="checkbox" data-min="1" data-max="2">
+            <label>2. Which features do you use in this application? (Pick 1-2)</label>
+            <input type="checkbox" name="features" value="ui"> UI Design<br>
+            <input type="checkbox" name="features" value="speed"> Speed<br>
+            <input type="checkbox" name="features" value="support"> Support
+            <div class="error-msg">Select between 1 and 2 options.</div>
+        </div>
+
+        <div class="question-block" data-required="true" data-type="radio">
+            <label>3. Rate your satisfaction about the application(1-5):</label>
+            <div class="rating-group">
+                <input type="radio" name="rating" value="1"> 1
+                <input type="radio" name="rating" value="2"> 2
+                <input type="radio" name="rating" value="3"> 3
+                <input type="radio" name="rating" value="4"> 4
+                <input type="radio" name="radio" value="5"> 5
+            </div>
+            <div class="error-msg">Please provide a rating.</div>
+        </div>
+
+        <div class="question-block" data-required="true" data-type="range" data-min="1" data-max="100">
+            <label>4. How many hours a week do you use the app? (1-100)</label>
+            <input type="number" name="hours" id="hours_input">
+            <div class="error-msg">Enter a number between 1 and 100.</div>
+        </div>
+
+        <div class="question-block">
+            <label>5. Any additional feedback? (Optional)</label>
+            <textarea name="feedback" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Survey</button>
+    </form>
+</div>
+
+<script>
+    const form = document.getElementById('surveyForm');
+    const progressBar = document.getElementById('progress-bar');
+    const saveStatus = document.getElementById('save-status');
+
+    // 1. Conditional Logic
+    function toggleConditional(value) {
+        const condQ = document.getElementById('conditional-q');
+        if (value === 'other') {
+            condQ.classList.remove('hidden');
+        } else {
+            condQ.classList.add('hidden');
+            condQ.querySelector('input').value = ''; // Reset if hidden
+        }
+        updateUI();
+    }
+
+    // 2. Validation Logic
+    function validateField(block) {
+        if (block.classList.contains('hidden')) return true;
+        
+        const type = block.getAttribute('data-type');
+        const isRequired = block.getAttribute('data-required') === 'true';
+        let isValid = true;
+
+        if (type === 'checkbox') {
+            const checkedCount = block.querySelectorAll('input[type="checkbox"]:checked').length;
+            const min = parseInt(block.getAttribute('data-min'));
+            const max = parseInt(block.getAttribute('data-max'));
+            isValid = checkedCount >= min && checkedCount <= max;
+        } else if (type === 'radio') {
+            isValid = block.querySelector('input[type="radio"]:checked') !== null;
+        } else if (type === 'range') {
+            const val = parseInt(block.querySelector('input').value);
+            const min = parseInt(block.getAttribute('data-min'));
+            const max = parseInt(block.getAttribute('data-max'));
+            isValid = !isNaN(val) && val >= min && val <= max;
+        } else {
+            const input = block.querySelector('input, select, textarea');
+            if (isRequired && (!input.value || input.value.trim() === "")) {
+                isValid = false;
+            }
+        }
+
+        const error = block.querySelector('.error-msg');
+        if (!isValid) {
+            block.classList.remove('valid');
+            if (error) error.style.display = 'block';
+        } else {
+            block.classList.add('valid');
+            if (error) error.style.display = 'none';
+        }
+        return isValid;
+    }
+
+    // 3. Progress Bar & UI Updates
+    function updateUI() {
+        const blocks = Array.from(document.querySelectorAll('.question-block:not(.hidden)'));
+        const total = blocks.length;
+        let validCount = 0;
+
+        blocks.forEach(block => {
+            if (validateField(block)) validCount++;
+        });
+
+        const progress = (validCount / total) * 100;
+        progressBar.style.width = progress + '%';
+        return validCount === total;
+    }
+
+    // 4. Auto-Save Functionality
+    function autoSave() {
+        const isValid = updateUI();
+        const timestamp = new Date().toLocaleTimeString();
+        
+        if (isValid) {
+            // Simulate API Call
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            localStorage.setItem('survey_autosave', JSON.stringify(data));
+            saveStatus.innerText = `Auto-save: Success at ${timestamp}`;
+            saveStatus.style.color = 'var(--success)';
+        } else {
+            saveStatus.innerText = `Auto-save: Failed (Validation Errors) at ${timestamp}`;
+            saveStatus.style.color = 'var(--error)';
+        }
+    }
+
+    // Event Listeners
+    form.addEventListener('input', updateUI);
+    form.addEventListener('change', updateUI);
+    
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (updateUI()) {
+            alert('Survey Submitted Successfully!');
+        } else {
+            alert('Please correct errors before submitting.');
+        }
+    });
+
+    // Run auto-save every 30 seconds
+    setInterval(autoSave, 30000);
+
+    // Initial check
+    updateUI();
+</script>
+
+</body>
+</html>
