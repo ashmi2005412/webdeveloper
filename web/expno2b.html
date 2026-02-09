@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Creative Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Projects Animation CSS ONLY -->
+  <style>
+    .flip-card {
+      perspective: 1000px;
+    }
+
+    .flip-inner {
+      position: relative;
+      height: 250px;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+    }
+
+    .flip-card:hover .flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-front,
+    .flip-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flip-back {
+      transform: rotateY(180deg);
+      background-color: #6366f1;
+      color: white;
+    }
+  </style>
+</head>
+
+<body class="bg-light" style="font-family: 'Poppins', sans-serif;">
+
+<section class="container-fluid min-vh-100">
+  <div class="row min-vh-100 g-0">
+
+    <div class="col-md-6 d-flex flex-column justify-content-center px-5 bg-dark text-white">
+      <h1>I'm Ashmi</h1>
+      <p class="lead">Google AI Essentials & Machine Learning</p>
+      <a href="#projects" class="btn btn-primary mt-3">View Projects</a>
+    </div>
+
+    <div class="col-md-6 d-flex align-items-center justify-content-center bg-primary text-white fs-1 fw-semibold">
+      Portfolio
+    </div>
+
+  </div>
+</section>
+
+<section id="projects" class="container py-5">
+  <h2 class="text-center mb-4">Projects</h2>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="flip-card">
+        <div class="flip-inner">
+          <div class="flip-front card shadow text-center p-5">
+            <h5>AI Innovation</h5>
+          </div>
+          <div class="flip-back card text-center p-5">
+            <p>Creative Applied Generative AI</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="flip-card">
+        <div class="flip-inner">
+          <div class="flip-front card shadow text-center p-5">
+            <h5>Neural</h5>
+          </div>
+          <div class="flip-back card text-center p-5">
+            <p>Deep Learning</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="flip-card">
+        <div class="flip-inner">
+          <div class="flip-front card shadow text-center p-5">
+            <h5>Deployment</h5>
+          </div>
+          <div class="flip-back card text-center p-5">
+            <p>Build and Deploy ML Solutions on Vertex AI</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container py-5">
+  <h2 class="text-center mb-4">Skills</h2>
+
+  <p>Promt Engineering: How to talks to AI</p>
+  <div class="progress mb-3" style="height:10px;">
+    <div class="progress-bar" style="width:50%"></div>
+  </div>
+
+  <p>Programming(Python Dominant)</p>
+  <div class="progress mb-3" style="height:10px;">
+    <div class="progress-bar bg-info" style="width:55%"></div>
+  </div>
+
+  <p>UI Design</p>
+  <div class="progress" style="height:10px;">
+    <div class="progress-bar bg-success" style="width:75%"></div>
+  </div>
+</section>
+
+
+<section class="container py-5 text-center">
+  <h2 class="mb-4">Testimonials</h2>
+
+  <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <p>"Amazing creative work!" – Client A</p>
+      </div>
+      <div class="carousel-item">
+        <p>"Highly professional designer." – Client B</p>
+      </div>
+      <div class="carousel-item">
+        <p>"Great attention to detail." – Client C</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="container py-5">
+  <h2 class="text-center mb-4">Contact</h2>
+
+  <form class="col-md-6 mx-auto">
+    <input type="text" class="form-control mb-3" placeholder="Name" required>
+    <input type="email" class="form-control mb-3" placeholder="Email" required>
+    <textarea class="form-control mb-3" placeholder="Message" required></textarea>
+    <button class="btn btn-primary w-100">Send</button>
+  </form>
+</section>
+
+
+<footer class="bg-dark text-white text-center py-3">
+  © 2026 Creative Portfolio
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
